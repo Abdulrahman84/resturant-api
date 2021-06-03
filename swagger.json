@@ -1,0 +1,44 @@
+{
+    "swagger" : "2.0",
+    "info" : {
+            "version" : "1.0", 
+        "title":"com.tibco.restbt.sample.bookstore", 
+        "description" : 
+        "Port Type:BookStoreResource"
+    },
+    "host": "localhost:3000",
+    "basepath": "/",
+    "schemas": "HTTP",
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/api/products/": {
+            "get": {
+                "description": "get all of book for admin" ,
+                "response2": {
+                    "200": {
+
+                    }
+                }
+
+            }
+        },
+        "/api/products/add": {
+            "get": {
+                "description": "get all of book for admin" ,
+                "response2": {
+                    "200": {
+                        
+                    }
+                }
+
+            }
+        }
+    }
+    
+
+}

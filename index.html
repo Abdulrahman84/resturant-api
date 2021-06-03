@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="/" id="form">
+        <button type="submit">
+            submit
+        </button>
+    </form>
+    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+<script>
+    Stripe.setPublishableKey('pk_test_51HkkefDHNiYh4mtD5GwpaFvauahMirEbeTrkxR8AeNHRPr7T1hcOE7VhJk0zeEyGv3nN8gGKQaBPFhJeTl9w5DHJ00ayh57RyD');
+
+    document.getElementById('form').addEventListener('submit', e => {
+        e.preventDefault();
+        Stripe.card.createToken({
+            number: 4242424242424242,
+            cvc: 123,
+            exp_month: 12,
+            exp_year: 21
+        }, stripeResponseHandler)
+        return false;
+    })
+
+    async function stripeResponseHandler(status, response) {
+
+            if (response.error) {
+            } else { 
+                let token = response.id;
+                console.log(token);
+                let products = [
+                    {product: "60743746ca03db136ca30eae", quantity: 2,price: 20}
+                ]
+                let adress = {
+                    city: "beba",
+                    zone: "beni madi",
+                    house: "about el masjed el kebeer"
+                }
+                let data = {
+                    token,
+                    products,
+                    adress,
+                    amount: 72.12, 
+                    userId: "600963fcf792a011c87613a3", 
+                    recieve: "pick up",
+                    email: "ahmedhaggagrady@gmail.com",
+                    phone: "01014223925"
+                }
+                // await fetch('http://localhost:3000/api/orders/add', {
+                //     method: "post",
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     },
+
+                //     body: JSON.stringify(data)
+                // }).then(res => {
+                //     console.log(res.json())
+                // })
+                // .catch(err => {
+                //     console.log(err)
+                // })
+            }
+    }
+</script>
+</body>
+</html>

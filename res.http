@@ -1,0 +1,143 @@
+#####signin ######
+POST http://localhost:3000/api/signin
+Content-Type: application/json
+
+{
+    "email": "admin@gmail.com",
+    "password": "AhmedHaggag@12345"
+}
+############# get all products ##########
+GET http://localhost:3000/api/products/
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDY1YjllYzFkMWMwYjBhMjA1YTk3NjkiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTYxODIyNjUzMiwiZXhwIjoxNjE4NDg1NzMyfQ.tPVI--BIoDb_XiWv8LpeHAjKd4xBaIQYlLNU9OmrEfc
+######## get product #########
+GET http://localhost:3000/api/products/product/6065be252cc9b504a4df88ab
+
+######## update product ########
+
+PUT http://localhost:3000/api/products/update
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDY1YjllYzFkMWMwYjBhMjA1YTk3NjkiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTYxODAwNDk0NiwiZXhwIjoxNjE4MjY0MTQ2fQ.zaGAWU1j7rQ1qxatjaQk287QDfZCI7g0z7IPZIUbh60
+
+{
+    "id": "6070d6a1eaa262056807ce36",
+    "newData": {
+        "name": "d"
+    }
+}
+
+######## delete product ######60664df75aed0107fc13d354
+DELETE  http://localhost:3000/api/products/delete
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDY1YjllYzFkMWMwYjBhMjA1YTk3NjkiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTYxODAwNDk0NiwiZXhwIjoxNjE4MjY0MTQ2fQ.zaGAWU1j7rQ1qxatjaQk287QDfZCI7g0z7IPZIUbh60
+
+{
+    "id": "6070d18bbcd2b8139072f71e"
+}
+
+################ get all categories categories
+GET http://localhost:3000/api/categories/
+
+######### get names of categories
+GET http://localhost:3000/api/categories/names
+
+######### get category by id
+GET http://localhost:3000/api/categories/get/60684953697ea511ecb982db
+
+
+######## update Category
+PUT http://localhost:3000/api/categories/update/6070cc7061df571734ae2404
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDY1YjllYzFkMWMwYjBhMjA1YTk3NjkiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTYxODAwNDk0NiwiZXhwIjoxNjE4MjY0MTQ2fQ.zaGAWU1j7rQ1qxatjaQk287QDfZCI7g0z7IPZIUbh60
+
+{
+    "name": "new product"
+}
+
+##### delete category and all products in this category
+DELETE  http://localhost:3000/api/categories/delete/6070cc7061df571734ae2404
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDY1YjllYzFkMWMwYjBhMjA1YTk3NjkiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTYxODAwNDk0NiwiZXhwIjoxNjE4MjY0MTQ2fQ.zaGAWU1j7rQ1qxatjaQk287QDfZCI7g0z7IPZIUbh60
+
+####### start orders 
+
+###### add order ##########
+POST  http://localhost:3000/api/orders/add
+Content-Type: application/json
+
+{
+    "token": "tok_1Ilg6JDHNiYh4mtDNFtZWmW1", 
+    "products": [
+        
+        {
+            "product": "60743746ca03db136ca30eae", 
+            "quantity": 2, 
+            "toppings": [
+                {"topping": "olive", "quantity": "with" } 
+            ],
+            "specialAdditions": [
+                {"addition": "chickens", "quantity": "with" } 
+            ],
+            "size": "meduim",
+            "pieces": "6",
+            "price": 20
+        }  
+    ],
+    "adress": {
+        "city": "beba",
+        "zone": "beni madi",
+        "house": "about el masjed el kebeer"
+    },
+    "amount": 72.12, 
+    "userId": "600963fcf792a011c87613a3", 
+    "recieve": "pick up" , 
+    "email": "ahmedhaggagrady@gmail.com",
+    "phone": "01014223925"
+}
+
+# token is from stripe
+# quantity toppings or specialAdditions is [with or plus]
+# userid is not reauired
+# recieve is [ pick up or delivery]
+
+
+####### GET orders ####
+GET http://localhost:3000/api/orders
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDY1YjllYzFkMWMwYjBhMjA1YTk3NjkiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTYyMjQ1Mjk1OCwiZXhwIjoxNjIyNzEyMTU4fQ.IOGEcBQzoVp8NhzfUpstDVLAjaFWk7Nl89HNyRn6N_M
+
+
+###### client order
+GET http://localhost:3000/api/orders/client/orders
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDY1YjllYzFkMWMwYjBhMjA1YTk3NjkiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTYxODg1NDkwNSwiZXhwIjoxNjE5MTE0MTA1fQ.7PBOI_2W1gM6d9RIdj7Y8M6OAKgZlgQLFfd21r6N9Q0
+
+#### compelet order ##
+PUT http://localhost:3000/api/orders/complete/607f27c3a679be0fd88725e0
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDY1YjllYzFkMWMwYjBhMjA1YTk3NjkiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTYxODg1NDkwNSwiZXhwIjoxNjE5MTE0MTA1fQ.7PBOI_2W1gM6d9RIdj7Y8M6OAKgZlgQLFfd21r6N9Q0
+
+####### cancel order ######
+PUT http://localhost:3000/api/orders/cancel/607dd2c07a889f081c5d8508
+
+###### delete order
+DELETE  http://localhost:3000/api/orders/delete/607dd3d3e11816124c201098
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDY1YjllYzFkMWMwYjBhMjA1YTk3NjkiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTYxODg1NDkwNSwiZXhwIjoxNjE5MTE0MTA1fQ.7PBOI_2W1gM6d9RIdj7Y8M6OAKgZlgQLFfd21r6N9Q0
+
+#### get purchases
+GET  http://localhost:3000/api/purchases/anylisis
+Authorization: "admin auth"
+
+######## get Purchases by id
+POST http://localhost:3000/api/purchases/607f29eaa679be0fd88725e1
+Authorization: "admin auth"
+###### get all users 
+GET http://localhost:3000/api/users/
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDY1YjllYzFkMWMwYjBhMjA1YTk3NjkiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTYyMjQyMDAxMCwiZXhwIjoxNjIyNjc5MjEwfQ.lxGErvXsxsOfGC_ijEHFrHnurKFRKYg1c9StODtQtyA
+
+##### get userProfile
+GET http://localhost:3000/api/users/user
+Authorization: "user auth"
+
+
+
+######## update image
+PUT http://localhost:3000/api/users/image/update
+Authorization: "user auth"
+
+########## get purchases
