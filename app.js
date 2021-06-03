@@ -49,10 +49,9 @@ const orderRouter = require("./routes/order");
 const purchasesRouter = require("./routes/purchases");
 
 const userRouter = require("./routes/user");
-const { response } = require("express");
 
-app.get("/", (_, res) => {
-  res.send("<h1>welcome</h1>");
+app.get("/", (req, res) => {
+  res.send("<h1>Welcome</h1>");
 });
 // using routes
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
