@@ -6,6 +6,8 @@ const path = require("path");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 
+const port = process.env.PORT || 3000;
+
 const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -28,14 +30,10 @@ const mongooseOption = {
 //     }
 // })
 
-mongoose.connect(
-  `mongodb+srv://travels:AhmedHaggag@12345@cluster0.u5klm.mongodb.net/resturant?retryWrites=true&w=majority`,
-  mongooseOption,
-  (err) => {
-    if (err) console.log(err);
-    else console.log("mongoose connected");
-  }
-);
+mongoose.connect(process.env.MONGODB_URI, mongooseOption, (err) => {
+  if (err) console.log(err);
+  else console.log("mongoose connected");
+});
 
 // import routes
 const authRouter = require("./routes/auth");
@@ -68,6 +66,6 @@ app.use("/api/purchases/", purchasesRouter);
 
 app.use("/api/users/", userRouter);
 
-app.listen(3000, () => console.log("server is running"));
+app.listen(port, () => console.log("server is running"));
 
 module.exports = app;
