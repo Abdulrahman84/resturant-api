@@ -9,6 +9,7 @@ exports.isAdmin = (req, res, next) => {
     if (verify.role == "admin") next();
     else res.status(400).json({ message: "you aren't admin" });
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: "something went wrong " + err });
   }
 };

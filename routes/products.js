@@ -9,13 +9,13 @@ router.get("/product/:productId", productsController.getProduct);
 router.post(
   "/add",
   guards.isAdmin,
-  upload.single("image"),
   check("name").not().isEmpty().withMessage("name can't be empty"),
   check("category").not().isEmpty().withMessage("category can't be empty"),
   check("descripition")
     .not()
     .isEmpty()
     .withMessage("description can't be empty"),
+  upload.single("image"),
   isValid,
   productsController.addProduct
 );
