@@ -1,31 +1,34 @@
-const multer = require('multer')
+const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
 
-exports.uploadProductImage =  multer({
-        storage: multer.diskStorage({
-            destination: (req, file, cb) => {
-                cb(null, 'uploads')
-            },
-            filename: (req, file, cb) => {
-                cb(null,  Date.now() + file.originalname )
-            }
-        }),
-        fileFilter: (req, file, cb) => {
-            if (file.mimetype === "image/jpeg" || file.mimetype === "image/jpg" || file.mimetype === "image/png") {
-                cb(null, true)
-            } else if (file.mimetype == "image/jpg") {
-                cb(null, true)
-            } else if (file.mimetype == "image/png") {
-                cb(null, true)
-            } else {
-                req.fileFilterError = {
-                    message: "file you select it can't be image, you should select image"
-                }
-                cb(null, true)
-            }
-        },
-        limits: {
-            fieldSize: 1024 * 1024 * 5
-        }
-}).single("image")
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads");
+  },
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      `${file.originalname.split(".")[0]}-${Date.now()}.${
+        file.originalname.split(".")[1]
+      }`
+    );
+  },
+});
 
+const upload = multer({
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return cb(new Error("Please upload an image"));
+    }
+    cb(undefined, true);
+  },
+  storage,
+});
+
+module.exports = { upload, cloudinary };

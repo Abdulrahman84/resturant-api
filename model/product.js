@@ -1,75 +1,80 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const prodcutSchema = mongoose.Schema({
+const prodcutSchema = mongoose.Schema(
+  {
     name: {
-        type: String,
-        index: true,
-        unique: true,
-        required: true
+      type: String,
+      index: true,
+      unique: true,
+      required: true,
     },
     slug: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     descripition: {
-        type: String,
-        required: true
-    }, 
+      type: String,
+      required: true,
+    },
     category: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     sizes: {
-        type: [
-            {
-                size: String,
-                price: Number
-            }
-        ],
-        default: []
+      type: [
+        {
+          size: String,
+          price: Number,
+        },
+      ],
+      default: [],
     },
     toppings: {
-        type: [
+      type: [
+        {
+          topping: String,
+          sizes: [
             {
-                topping: String,
-                sizes: [
-                    {
-                        size: String,
-                        price: Number
-                    }
-                ]
-            }
-        ]
-    }
-    ,
+              size: String,
+              price: Number,
+            },
+          ],
+        },
+      ],
+    },
     specialsAdditions: {
-        type: [
+      type: [
+        {
+          addition: String,
+          sizes: [
             {
-                addition: String,
-                sizes: [
-                    {
-                        size: String,
-                        price: Number
-                    }
-                ]
-            }
-        ]
+              size: String,
+              price: Number,
+            },
+          ],
+        },
+      ],
     },
     pieces: {
-        type: [
-            {
-                pieces: Number,
-                price: Number
-            }
-        ]
+      type: [
+        {
+          pieces: Number,
+          price: Number,
+        },
+      ],
     },
     price: Number,
     image: {
-        type: String,
-        required: true
-    }
-}, { timestamps: true })
+      type: String,
+      required: true,
+    },
+    cloudinary_id: {
+      type: String,
+    },
+  },
+  { timestamps: true }
+);
 
-const Product = mongoose.model('product', prodcutSchema);
+const Product = mongoose.model("product", prodcutSchema);
 
 module.exports = Product;

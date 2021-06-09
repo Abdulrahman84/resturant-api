@@ -1,8 +1,7 @@
 const Product = require("../model/product");
 const slugify = require("slugify");
-const fs = require("fs");
 const Category = require("../model/category");
-let uploadsPath = __dirname.replace("controller", "uploads") + "\\";
+const { cloudinary } = require("../uploader/adminuploads");
 
 exports.getAllproducts = async (req, res, next) => {
   const query = Product.find();
@@ -13,7 +12,7 @@ exports.getAllproducts = async (req, res, next) => {
       id: product._id,
       name: product.name,
       category: product.category,
-      image: process.env.URL + product.image,
+      image: product.image,
       productPage: {
         method: "GET",
         url: process.env.URL + "api/products/" + product.id,
@@ -36,7 +35,7 @@ exports.getProduct = async (req, res, next) => {
     id: product.id,
     name: product.name,
     category: product.category,
-    image: process.env.URL + product.image,
+    image: product.image,
     descripition: product.descripition,
     toppings: product.toppings,
     defaultTopping: product.defaultTopping,
@@ -89,6 +88,16 @@ exports.addProduct = async (req, res, next) => {
   if (typeof pieces !== "undefined") {
     pieces = JSON.parse(pieces);
   }
+  let photo;
+  let cl_id;
+  if (req.file) {
+    const result = await cloudinary.uploader.upload(req.file.path);
+    photo = result.secure_url;
+    cl_id = result.public_id;
+  } else {
+    photo = null;
+    cl_id = null;
+  }
   let slug = slugify(name);
   let productData = {
     name,
@@ -100,7 +109,8 @@ exports.addProduct = async (req, res, next) => {
     specialsAdditions,
     price,
     slug,
-    image: req.file.filename,
+    image: photo,
+    cloudinary_id: cl_id,
   };
   try {
     const product = new Product(productData);
@@ -128,7 +138,8 @@ exports.addProduct = async (req, res, next) => {
       id: save.id,
       name: save.name,
       category: save.category,
-      image: process.env.URL + save.image,
+      image: save.image,
+      cloudinary_id: save.cloudinary_id,
       descripition: save.descripition,
       toppings: save.toppings,
       sizes: save.sizes,
@@ -137,62 +148,88 @@ exports.addProduct = async (req, res, next) => {
       price: save.price,
     });
   } catch (error) {
-    console.log(error.code);
-    fs.unlinkSync(uploadsPath + req.file.filename);
     if (error.code == 11000) {
-      res.status(400).json({ message: "there are product with this name" });
+      res
+        .status(400)
+        .json({ message: "there is already a product with this name" });
     } else {
-      res.status(500).json({ message: "something went wrong" });
+      res.status(500).json({ message: "something went wrong " + error });
     }
   }
 };
 exports.deleteProduct = async (req, res, next) => {
-  const { id } = req.body;
-  const deleteProduct = await Product.findByIdAndDelete(id);
-  if (deleteProduct) {
-    return fs.unlink(uploadsPath + deleteProduct.image, (err) => {
-      if (err) res.status(500).json({ message: "something went wrong" });
-      else res.status(200).json({ message: "product is deleted successfully" });
-    });
+  try {
+    const _id = req.body.id;
+    const product = await Product.findOneAndRemove(_id);
+    if (!product) return res.send({ message: "no product found" });
+    res.send({ message: "deleted" });
+
+    await cloudinary.uploader.destroy(product.cloudinary_id);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "something went wrong " + err });
   }
-  res.status(500).json({ message: "something went wrong" });
 };
 exports.updateProduct = (req, res, next) => {
-  const { id, newData } = req.body;
-  if (!id) {
-    return res.status(400).json({ message: "can't update product without id" });
-  }
-  Product.findByIdAndUpdate(id, newData, { new: true }, (err, update) => {
-    if (update) {
-      return res.status(200).json({
-        message: "product is updated successfully",
-        id: update.id,
-        name: update.name,
-        category: update.category,
-        image: process.env.URL + update.image,
-        descripition: update.descripition,
-        toppings: update.toppings,
-        sizes: update.sizes,
-        specialsAdditions: update.specialsAdditions,
-        pieces: update.pieces,
-        price: update.price,
-      });
+  try {
+    ////////////////////////////////////////////
+    // req.body is empty and i don't know why //
+    ////////////////////////////////////////////
+    const { id } = req.body;
+    if (!id) {
+      return res
+        .status(400)
+        .json({ message: "can't update product without id" });
     }
-    res.status(500).json({ message: "Something went wrong" });
-  });
+    const {
+      name,
+      category,
+      descripition,
+      toppings,
+      sizes,
+      specialsAdditions,
+      pieces,
+      price,
+    } = req.body;
+    Product.findByIdAndUpdate(id, req.body, (err, update) => {
+      if (update) {
+        return res.status(200).json({
+          message: "product is updated successfully",
+          id: update.id,
+          name,
+          category,
+          image: update.image,
+          descripition,
+          toppings,
+          sizes,
+          specialsAdditions,
+          pieces,
+          price,
+        });
+      } else {
+        if (err.code == 11000)
+          return res.send({
+            message: "there is already a product with this name ",
+          });
+        console.log(err);
+        res.send();
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong " + err });
+  }
 };
 exports.updateProductImage = async (req, res, next) => {
-  const image = req.file.filename;
+  if (!req.file)
+    return res.status(400).json({ message: "you should select an image" });
 
+  const image = req.file.filename;
   if (!image || !req.file.originalname.match(/\.(jpg|jpeg|png)$/)) {
     return res.status(400).json({ message: "you should select an image" });
   }
   const id = req.body.id;
   if (!id) {
-    fs.unlinkSync(uploadsPath + image);
-    return res
-      .status(400)
-      .json({ message: "can't update product with this image" });
+    return res.status(400).json({ message: "can't update product with no id" });
   }
   try {
     const product = await Product.findByIdAndUpdate(
@@ -200,13 +237,11 @@ exports.updateProductImage = async (req, res, next) => {
       { image },
       { new: false }
     );
-    fs.unlinkSync(uploadsPath + product.image);
     res.status(200).json({
       message: "product image is updated",
-      newImage: process.env.URL + image,
+      newImage: product.image,
     });
   } catch (error) {
-    fs.unlinkSync(uploadsPath + image);
     res.status(500).json({ message: "something went wrong" });
   }
 };
