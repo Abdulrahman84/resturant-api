@@ -211,11 +211,21 @@ exports.updateProduct = async (req, res, next) => {
   }
 };
 exports.updateProductImage = async (req, res, next) => {
-  if (!req.file)
-    return res.status(400).json({ message: "please upload a file" });
-
-  const image = req.file.filename;
-
+  let photo;
+  let cl_id;
+  if (!req.file) {
+    photo = null;
+    cl_id = null;
+    return res.status(400).send({ message: "please upload a file" });
+  }
+  if (!req.file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+    return res.send({ error: "Please upload an image" });
+  }
+  if (req.file) {
+    const result = await cloudinary.uploader.upload(req.file.path);
+    photo = result.secure_url;
+    cl_id = result.public_id;
+  }
   const id = req.body.id;
   if (!id) {
     return res.status(400).json({ message: "can't update product with no id" });
@@ -223,8 +233,8 @@ exports.updateProductImage = async (req, res, next) => {
   try {
     const product = await Product.findByIdAndUpdate(
       id,
-      { image },
-      { new: false }
+      { image: photo },
+      { new: true }
     );
     if (!product) return res.status(404).send({ mssage: "no product found" });
     res.status(200).send({
