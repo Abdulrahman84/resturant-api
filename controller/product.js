@@ -138,7 +138,6 @@ exports.addProduct = async (req, res, next) => {
       id: save.id,
       name: save.name,
       category: save.category,
-      image: save.image,
       cloudinary_id: save.cloudinary_id,
       descripition: save.descripition,
       toppings: save.toppings,
