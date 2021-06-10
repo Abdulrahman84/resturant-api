@@ -233,7 +233,7 @@ exports.updateProductImage = async (req, res, next) => {
   try {
     const product = await Product.findByIdAndUpdate(
       id,
-      { image: photo },
+      { image: photo, cloudinary_id: cl_id },
       { new: true }
     );
     if (!product) return res.status(404).send({ mssage: "no product found" });
