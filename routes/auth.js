@@ -44,4 +44,5 @@ router.post(
   isValid,
   userController.adminSignup
 );
+
 module.exports = router;

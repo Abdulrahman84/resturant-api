@@ -14,14 +14,15 @@ exports.isAdmin = (req, res, next) => {
   }
 };
 exports.isUser = (req, res, next) => {
-  let token = req.headers.authorization;
   try {
+    let token = req.headers.authorization;
+    if (!token) return res.send({ error: "please provide a token" });
     const verify = jwt.verify(token, process.env.JWTSECRET);
     req.email = verify.email;
     req.user = verify._id;
     req.role = verify.role;
     next();
   } catch (err) {
-    res.status(400).json({ message: "you should sign in first" });
+    res.status(400).json({ message: "invalid token" });
   }
 };
