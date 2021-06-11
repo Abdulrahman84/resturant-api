@@ -183,24 +183,26 @@ exports.updateProduct = async (req, res, next) => {
       descripition,
       toppings,
       sizes,
-      image,
       specialsAdditions,
       pieces,
       price,
     } = req.body;
-    const updatedProduct = await Product.findByIdAndUpdate(id, req.body);
+    const updatedProduct = await Product.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+    console.log(updatedProduct.price);
     if (!updatedProduct)
       return res.status(404).send({ error: "No product found" });
     res.send({
       message: "product is updated successfully",
-      name,
-      category,
-      descripition,
-      toppings,
-      sizes,
-      specialsAdditions,
-      pieces,
-      price,
+      name: name || updatedProduct.name,
+      category: category || updatedProduct.category,
+      descripition: descripition || updatedProduct.descripition,
+      toppings: toppings || updatedProduct.toppings,
+      sizes: sizes || updatedProduct.sizes,
+      specialsAdditions: specialsAdditions || updatedProduct.specialsAdditions,
+      pieces: pieces || updatedProduct.pieces,
+      price: price || updatedProduct.price,
     });
   } catch (err) {
     if (err.code == 11000)
