@@ -177,6 +177,7 @@ exports.updateProduct = async (req, res, next) => {
       return res
         .status(400)
         .send({ message: "can't update product without id" });
+
     const {
       name,
       category,
@@ -187,22 +188,30 @@ exports.updateProduct = async (req, res, next) => {
       pieces,
       price,
     } = req.body;
-    const updatedProduct = await Product.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
-    console.log(updatedProduct.price);
-    if (!updatedProduct)
-      return res.status(404).send({ error: "No product found" });
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).send({ error: "No product found" });
+
+    name ? (product.name = name) : (product.name = product.name);
+    category
+      ? (product.category = category)
+      : (product.category = product.category);
+    descripition
+      ? (product.descripition = descripition)
+      : (product.descripition = product.descripition);
+    toppings
+      ? (product.toppings = toppings)
+      : (product.toppings = product.toppings);
+    sizes ? (product.sizes = sizes) : (product.sizes = product.sizes);
+    specialsAdditions
+      ? (product.specialsAdditions = specialsAdditions)
+      : (product.specialsAdditions = product.specialsAdditions);
+    pieces ? (product.pieces = pieces) : (product.pieces = product.pieces);
+    price ? (product.price = price) : (product.price = product.price);
+    await product.save();
+
     res.send({
       message: "product is updated successfully",
-      name: name || updatedProduct.name,
-      category: category || updatedProduct.category,
-      descripition: descripition || updatedProduct.descripition,
-      toppings: toppings || updatedProduct.toppings,
-      sizes: sizes || updatedProduct.sizes,
-      specialsAdditions: specialsAdditions || updatedProduct.specialsAdditions,
-      pieces: pieces || updatedProduct.pieces,
-      price: price || updatedProduct.price,
+      product,
     });
   } catch (err) {
     if (err.code == 11000)
